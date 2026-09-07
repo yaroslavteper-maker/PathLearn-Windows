@@ -90,9 +90,16 @@ space and QuPath's space. There is no mirroring anywhere; the macOS build's
 
 **Annotations drawn on macOS are mirrored.** The first time you open a slide
 whose sidecar came from the Mac, PathLearn flips it once, backs the original up
-as `<name>.geojson.macos-mirrored.bak`, and tells you it did. See
-[PORTING-NOTES.md](PORTING-NOTES.md) — this contradicts the handoff docs, and
-the reason is documented there.
+as `<name>.geojson.macos-mirrored.bak`, and tells you it did.
+
+This contradicts the macOS handoff documentation, which describes the sidecars
+as already top-left. They are not: the Swift source writes `slideH − y`, and
+reading a sample of real sidecars against their slides confirmed the flip is
+needed. The Swift source is the authority on this, not the prose. Detection is
+by a marker written into files PathLearn itself has saved — a file with no
+marker is assumed to be from macOS and is flipped once, which is why the
+marker must never be stamped onto a file that has not actually been
+converted.
 
 ## Layout
 
@@ -193,9 +200,14 @@ breakdown, or both — and export the cohort as CSV or a three-sheet Excel
 workbook.
 
 **Not yet built:** VISTA, and the detect-then-grade region-proposal cascade.
-See [PORTING-NOTES.md](PORTING-NOTES.md) for the ordered plan and the measured
-results — including the batch effect that makes leave-one-slide-out the only
-score worth quoting.
+
+**A warning about scores.** Patch features carry a strong batch effect: an
+embedding can identify *which slide* a patch came from more reliably than what
+tissue it shows. Any accuracy from a split that puts patches from one slide on
+both sides of the train/test line is therefore inflated, sometimes severely.
+Leave-one-slide-out is the only score worth quoting, the trainer reports it
+alongside a majority-class baseline, and **Machine Learning ▸ t-SNE** fits a
+linear probe so you can measure the effect on your own bank.
 
 The tests need no data of their own: they generate synthetic pyramidal slides,
 including one with two regions of deliberately different architecture used to

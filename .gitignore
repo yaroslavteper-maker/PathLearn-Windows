@@ -72,3 +72,6 @@ hf-cache/
 
 # Unpublished research notes: kept out of the repository deliberately.
 PANIN-FEATURE-STUDY.md
+
+# Internal engineering log: kept out of the repository deliberately.
+PORTING-NOTES.md

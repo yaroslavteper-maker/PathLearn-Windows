@@ -10,7 +10,7 @@ what makes a large ROI affordable, because most of a slide is background.
 
 Patches are embedded in **batches** (default 8): the GPU is idle between small
 calls, and batching is the difference between ~29 ms and ~450 ms per patch on
-UNI2-h.  See PORTING-NOTES for why the batch is not larger.
+UNI2-h.  Larger batches did not measurably help and cost memory.
 """
 
 from __future__ import annotations

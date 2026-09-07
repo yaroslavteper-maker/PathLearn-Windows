@@ -359,7 +359,7 @@ def descriptor(spec: ModelSpec, filename: str, external_data: bool = False) -> d
 
     `kind` becomes "onnx" so a Windows-extracted patch can never be silently
     pooled with a macOS `coreml:` one.  Whether the two are numerically
-    equivalent is a separate, measurable question — see PORTING-NOTES.
+    equivalent is a separate, measurable question.
     """
     return {
         "identity": {"kind": "onnx", "name": spec.name, "revision": spec.revision},

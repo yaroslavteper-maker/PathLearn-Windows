@@ -82,7 +82,7 @@ on ONNX and write the name into the descriptor.**
 - Thresholds confirmed against `vista_model.py`: neoplasia **0.7**,
   metaplasia **0.5**, normal **0.3**; combine normal > metaplasia > neoplasia.
 - The corrected Reinhard constants and the two-step normalisation are recorded
-  as Corrections 5 and 6 in `../PORTING-NOTES.md`, verified independently
+  as corrections to the handoff documentation, verified independently
   against `reference-swift-source/Models/VISTAColor.swift`.
 
 ### Extractor usage on the Mac
@@ -107,7 +107,7 @@ on ONNX and write the name into the descriptor.**
 | `data/Pancreatic Pathology.panin-profile.json` | Low. | Class names/colours are re-creatable; `ClassificationProfile.default()` already matches the shipped Swift default. |
 | `data/224model.paninmodel.json` | Low. | Legacy-format classifier. |
 | `verification/Uni2.bank` | Low. | Its primary slide was already missing; drive E: has other uni2-h banks. |
-| Full `MANIFEST.md` text | Low. | Its substance is captured here and in `../PORTING-NOTES.md`. |
+| Full `MANIFEST.md` text | Low. | Its substance is captured here. |
 
 ## What drive E: provides instead
 
