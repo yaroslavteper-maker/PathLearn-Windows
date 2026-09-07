@@ -1,8 +1,14 @@
 # PathLearn (Windows)
 
 Whole-slide-image annotation and machine-learning workbench for digital
-pathology. Windows rewrite of the macOS/Swift original — same data formats,
-same algorithms, one clean coordinate system.
+pathology. Windows rewrite of the macOS/Swift original
+([yaroslavteper-maker/PathLearn](https://github.com/yaroslavteper-maker/PathLearn)) —
+same data formats, same algorithms, one clean coordinate system.
+
+The two are separate codebases with no shared history: that one is a Swift/Xcode
+app for macOS, this one is Python/PySide6 for Windows. Annotations written by
+either open in the other, with one caveat about Y — see
+[Coordinates](#coordinates--read-this-before-touching-pixels).
 
 > Research tooling. **Not a medical device; not for diagnostic use.**
 
