@@ -1,0 +1,7 @@
+MODEL WEIGHTS ARE NOT COVERED BY THE LICENCE
+============================================
+
+This licence covers the PathLearn source code only. PathLearn ships no model
+weights. Phikon, UNI and UNI2-h each carry their own licence, none of which
+permit redistribution, and each must be obtained and converted by the user
+under its own terms. See the "Feature extractors" section of README.md.

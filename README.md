@@ -203,6 +203,9 @@ check that the geometry descriptors separate them in the expected direction.
 
 ## Licence
 
-MIT — see [LICENSE](LICENSE). The licence covers the source code only:
-PathLearn ships no model weights, and Phikon, UNI and UNI2-h each carry their
-own non-redistributable licence.
+MIT — see [LICENSE](LICENSE).
+
+The licence covers **the source code only**. PathLearn ships no model weights:
+Phikon, UNI and UNI2-h each carry their own licence, none of which permit
+redistribution, and each must be obtained and converted by you under its own
+terms. See [NOTICE](NOTICE) and the *Feature extractors* section above.
