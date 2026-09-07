@@ -1,0 +1,50 @@
+[project]
+name = "pathlearn"
+version = "0.1.0"
+description = "Whole-slide-image annotation and machine-learning workbench for digital pathology"
+requires-python = ">=3.12"
+license = "MIT"
+license-files = ["LICENSE"]
+dependencies = [
+    "PySide6>=6.7",
+    "numpy>=1.26",
+    "scipy>=1.11",
+    "scikit-image>=0.22",
+    "Pillow>=10",
+    "openslide-python>=1.4",
+    "openslide-bin>=4.0",
+]
+
+[project.optional-dependencies]
+# Feature extraction. Pick ONE of ml / gpu: onnxruntime and onnxruntime-gpu
+# provide the same `onnxruntime` module, and installing both is undefined.
+#
+# `gpu` is not a superset of `ml`. onnxruntime-gpu needs a matching CUDA
+# runtime present on the machine; without it, session creation SUCCEEDS and
+# silently falls back to CPU at roughly 20x the latency. Machine Learning >
+# Installed Extractors… reports the provider actually in use, which is the
+# only reliable way to notice.
+ml = ["onnxruntime>=1.18"]
+gpu = ["onnxruntime-gpu>=1.18"]
+# Project ▸ Export Excel. Optional on purpose: CSV export needs nothing, opens
+# in Excel directly, and is what the app falls back to telling you about when
+# openpyxl is absent. Only the .xlsx workbook (three sheets, real numbers
+# rather than text) needs this.
+excel = ["openpyxl>=3.1"]
+dev = ["pytest>=8", "pytest-qt>=4.4", "openpyxl>=3.1"]
+
+[project.scripts]
+pathlearn = "pathlearn.app:main"
+
+[build-system]
+# >=77 for PEP 639: the SPDX `license = "MIT"` string and
+# `license-files` are rejected by older setuptools.
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["pathlearn*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+filterwarnings = ["error::DeprecationWarning:pathlearn.*"]

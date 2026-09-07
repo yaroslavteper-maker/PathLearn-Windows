@@ -1,0 +1,25 @@
+{
+  "featureDim": 768,
+  "identity": {
+    "kind": "coreml",
+    "name": "phikon-v1",
+    "revision": 1
+  },
+  "inputHeight": 224,
+  "inputWidth": 224,
+  "kind": "coreml",
+  "modelFilename": "phikon.mlpackage",
+  "pixelNormalization": {
+    "meanRGB": [
+      0.485,
+      0.456,
+      0.406
+    ],
+    "scale": 0.00392156862745098,
+    "stdRGB": [
+      0.229,
+      0.224,
+      0.225
+    ]
+  }
+}

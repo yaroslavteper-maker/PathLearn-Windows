@@ -1,0 +1,14 @@
+# Normalise line endings in the repository to LF; check out native.
+# PathLearn is developed on Windows but the source is plain-text and portable,
+# and mixed endings make diffs unreadable for anyone who clones it elsewhere.
+* text=auto
+
+*.py    text diff=python
+*.md    text
+*.toml  text
+*.json  text
+*.ps1   text eol=crlf
+
+*.png   binary
+*.jpg   binary
+*.onnx  binary

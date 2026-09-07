@@ -1,0 +1,25 @@
+{
+  "featureDim": 1536,
+  "identity": {
+    "kind": "coreml",
+    "name": "uni2-h",
+    "revision": 1
+  },
+  "inputHeight": 224,
+  "inputWidth": 224,
+  "kind": "coreml",
+  "modelFilename": "uni2.mlpackage",
+  "pixelNormalization": {
+    "meanRGB": [
+      0.485,
+      0.456,
+      0.406
+    ],
+    "scale": 0.00392156862745098,
+    "stdRGB": [
+      0.229,
+      0.224,
+      0.225
+    ]
+  }
+}

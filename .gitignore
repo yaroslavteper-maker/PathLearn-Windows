@@ -1,0 +1,74 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.venv/
+venv/
+*.tmp
+*.partial
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# ---------------------------------------------------------------------------
+# Research data.
+#
+# None of this belongs in the repository. Slides and banks are large, and a
+# file committed once survives in the history even after it is deleted — so
+# these patterns are deliberately broad. Tests generate their own synthetic
+# slides at run time and never need real data.
+# ---------------------------------------------------------------------------
+
+# Whole-slide images
+*.svs
+*.ndpi
+*.mrxs
+*.scn
+*.vms
+*.vmu
+*.bif
+*.czi
+*.tif
+*.tiff
+
+# Annotation sidecars and their migration backups
+*.geojson
+*.geojson.macos-mirrored.bak
+
+# Predictions written beside a slide
+*.predictions.json
+*.predictions.json.gz
+
+# Banks, saved states, projects, trained classifiers
+*.db
+*.db-wal
+*.db-shm
+bank.db
+geometry_bank.json
+*.pathlearn
+*.pathlearn-project.json
+*.cl
+*.paninmodel.json
+
+# Model weights. PathLearn ships NO weights: Phikon, UNI and UNI2-h each carry
+# their own licence and none permit redistribution. Users convert their own.
+*.onnx
+*.onnx.data
+*.safetensors
+*.pt
+*.pth
+Extractors/
+hf-cache/
+
+# Exports
+*.csv
+*.xlsx
+
+# Unpublished research notes: kept out of the repository deliberately.
+PANIN-FEATURE-STUDY.md
