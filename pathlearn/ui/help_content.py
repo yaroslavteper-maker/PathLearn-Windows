@@ -370,6 +370,11 @@ quietly uses the CPU.</p>
 
 Topic("Extracting patches", "extract patches grid stride white nuclei sampling bank", """
 <h2>Extracting patches</h2>
+<p class="warn">Patches are placed on a grid anchored to each region's
+bounding box, and the last row and column are pushed flush against its far
+edge so no strip of the region goes unsampled. Those edge patches therefore
+overlap their neighbours slightly — expected, and better than missing
+tissue.</p>
 <p><b>Machine Learning ▸ Extract Patches…</b> (Ctrl+E). Samples a grid inside
 each ticked annotation, runs every patch through an extractor, and stores the
 feature vectors in the patch bank.</p>

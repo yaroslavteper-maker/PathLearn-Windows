@@ -12,6 +12,13 @@ level-0, top-left origin, Y down.
 The grid is anchored at the polygon's bounding box, not at a global origin, so
 two annotations sample on independent lattices.  That matches the Swift and
 keeps a patch grid stable when unrelated annotations change.
+
+It also always reaches the far side of that bounding box.  Stepping by stride
+alone stops at the last whole stride, which left a band of up to one stride
+along the right and bottom of every region whose extent was not an exact
+multiple — visible in the app as a heatmap the shape of the annotation that
+came up short of it.  ``_grid`` snaps a final origin flush to the far edge,
+which overlaps its neighbour and is worth it.
 """
 
 from __future__ import annotations
@@ -54,8 +61,8 @@ def sample_patches(polygon: Sequence[Point],
     if x_end < x_start or y_end < y_start:
         return []
 
-    grid_x = np.arange(x_start, x_end + 1, stride_level0, dtype=np.int64)
-    grid_y = np.arange(y_start, y_end + 1, stride_level0, dtype=np.int64)
+    grid_x = _grid(x_start, x_end, stride_level0)
+    grid_y = _grid(y_start, y_end, stride_level0)
     if grid_x.size == 0 or grid_y.size == 0:
         return []
 
@@ -73,6 +80,26 @@ def sample_patches(polygon: Sequence[Point],
     inside = points_in_polygon(origin_x + half, origin_y + half, xs, ys)
     return [(int(x), int(y)) for x, y in zip(origin_x[inside], origin_y[inside])]
 
+
+def _grid(start: int, end: int, stride: int) -> np.ndarray:
+    """Origins from *start* to *end* inclusive, always reaching *end*.
+
+    ``arange`` alone stops at the last whole stride, so unless the span is an
+    exact multiple of the stride the final row or column never reaches *end*
+    and a band of up to ``stride - 1`` pixels along the right and bottom edges
+    of the region is never sampled at all. On a large annotation that is a
+    visible strip of tissue with no heatmap over it, in the shape of the
+    region — which is exactly what it looks like in the app.
+
+    Snapping a final origin flush to *end* costs one extra row and column and
+    overlaps its neighbour, which is harmless: prediction resolves overlapping
+    tiles by confidence, and for extraction an extra edge patch is better than
+    a missed one.
+    """
+    grid = np.arange(start, end + 1, stride, dtype=np.int64)
+    if grid.size and grid[-1] < end:
+        grid = np.append(grid, np.int64(end))
+    return grid
 
 def cancel_origins(origins: Sequence[tuple[int, int]],
                    patch_size_level0: int,

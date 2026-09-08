@@ -132,9 +132,20 @@ class TestPreview:
         assert not sheet.extract_button.isEnabled()
 
     def test_halving_stride_quadruples_count(self, sheet):
-        """The reason the preview exists at all."""
+        """The reason the preview exists at all.
+
+        Measured with a patch small enough that the fixture's 900 px regions
+        hold many rows. The relationship is quadratic only in the limit: the
+        grid also carries one edge row and column snapped flush to the far
+        side of the region, and on a region a mere four patches wide that
+        constant is a large enough share to pull the ratio well under four.
+        """
+        sheet.patch_size.setValue(64)
+        sheet.stride.setValue(64)
+        sheet._update_preview()
         base = sheet._estimated
-        sheet.stride.setValue(sheet.stride.value() // 2)
+
+        sheet.stride.setValue(32)
         sheet._update_preview()
         assert 3.0 < sheet._estimated / base < 5.0
 

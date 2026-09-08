@@ -53,10 +53,31 @@ class TestSamplePatches:
 
     def test_patch_only_just_fits(self):
         """A box exactly one patch wide yields exactly one column."""
-        origins = sample_patches(square(0, 0, 2000), SLIDE_W, SLIDE_H,
+        origins = sample_patches(square(0, 0, 1024), SLIDE_W, SLIDE_H,
                                  patch_size_level=256, stride_level=256,
                                  level_downsample=4.0)
         assert sorted({x for x, _ in origins}) == [0]
+
+    def test_the_far_edge_is_covered_when_the_box_is_not_a_whole_number(self):
+        """A 2000 px box and a 1024 px patch: one column would miss 976 px.
+
+        ``arange`` stops at the last whole stride, so without a final origin
+        snapped flush to the far edge, nearly half this region would never be
+        sampled — a band of tissue with no heatmap over it.
+        """
+        origins = sample_patches(square(0, 0, 2000), SLIDE_W, SLIDE_H,
+                                 patch_size_level=256, stride_level=256,
+                                 level_downsample=4.0)
+        xs = sorted({x for x, _ in origins})
+        assert xs == [0, 976]
+        assert xs[-1] + 1024 == 2000        # reaches the far edge exactly
+
+    def test_a_whole_number_of_patches_gains_no_extra_column(self):
+        """The snap must not add a redundant row when the tiling is exact."""
+        origins = sample_patches(square(0, 0, 2048), SLIDE_W, SLIDE_H,
+                                 patch_size_level=256, stride_level=256,
+                                 level_downsample=4.0)
+        assert sorted({x for x, _ in origins}) == [0, 1024]
 
     def test_patches_never_leave_the_slide(self):
         """A polygon overhanging the edge must not emit out-of-bounds rects."""
@@ -193,3 +214,53 @@ class TestMeanMaxStd:
 
     def test_dimension_helper(self):
         assert pooled_dimension(768) == 2304
+
+class TestTheGridCoversTheRegion:
+    """The bug this class exists for: a heatmap that stopped short of the
+    annotation's right and bottom edges, in the shape of the annotation."""
+
+    @staticmethod
+    def covered_fraction(polygon, patch=224, stride=224, downsample=1.0,
+                         step=16):
+        """What fraction of the polygon's area the sampled patches cover."""
+        import numpy as np
+
+        from pathlearn.core.sampler import points_in_polygon
+
+        xs = np.array([p.x for p in polygon], dtype=np.float64)
+        ys = np.array([p.y for p in polygon], dtype=np.float64)
+        pad = int(patch * downsample)
+        gx = np.arange(xs.min() - pad, xs.max() + pad, step) + step / 2
+        gy = np.arange(ys.min() - pad, ys.max() + pad, step) + step / 2
+        X, Y = np.meshgrid(gx, gy)
+        inside = points_in_polygon(X.ravel(), Y.ravel(), xs, ys).reshape(X.shape)
+
+        origins = sample_patches(polygon, SLIDE_W, SLIDE_H, patch, stride,
+                                 downsample)
+        size = int(round(patch * downsample))
+        covered = np.zeros_like(inside, dtype=bool)
+        for x, y in origins:
+            covered[np.ix_((gy >= y) & (gy < y + size),
+                           (gx >= x) & (gx < x + size))] = True
+        return float((inside & covered).sum()) / float(inside.sum())
+
+    @pytest.mark.parametrize("side", [500, 1000, 2000, 4000])
+    def test_a_square_is_covered_completely(self, side):
+        """Whatever the size, an axis-aligned region tiles exactly."""
+        assert self.covered_fraction(square(0, 0, side)) == pytest.approx(1.0)
+
+    def test_a_square_at_a_coarse_level_too(self):
+        assert self.covered_fraction(square(0, 0, 4000), patch=256,
+                                     stride=256, downsample=4.0) ==             pytest.approx(1.0)
+
+    def test_a_big_round_region_is_almost_completely_covered(self):
+        """Curved edges keep a thin inset from the centre-inside rule, but
+        nothing like the stride-wide band the grid used to leave."""
+        import math
+
+        circle = [Point(5_000 + 3000 * math.cos(t), 4_000 + 3000 * math.sin(t))
+                  for t in [i * 2 * math.pi / 64 for i in range(64)]]
+        assert self.covered_fraction(circle) > 0.98
+
+    def test_overlapping_strides_still_cover(self):
+        assert self.covered_fraction(square(0, 0, 1500), stride=112) ==             pytest.approx(1.0)
